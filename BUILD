@@ -15,4 +15,17 @@ package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
-exports_files(["LICENSE"])
+exports_files(["LICENSE", "version.bzl"])
+
+filegroup(
+    name = "distribution",
+    srcs = [
+        "BUILD",
+        "LICENSE",
+        "internal_deps.bzl",
+        "internal_setup.bzl",
+        "//python:distribution",
+        "//tools:distribution",
+    ],
+    visibility = ["//distro:__pkg__"],
+)
