@@ -173,7 +173,7 @@ def main():
           keeped_lines.append(line)
       else:
         continue
-    tempfile = open("temp_reqs.txt", "w")
+    tempfile = open("temp_reqs.txt", "wt")
     tempfile.writelines(keeped_lines)
 
   # https://github.com/pypa/pip/blob/9.0.1/pip/__init__.py#L209
@@ -242,7 +242,7 @@ def requirement(name):
   if name_key not in _requirements:
     fail("Could not find pip-provided dependency: '%s'" % name)
   return _requirements[name_key]
-""".format(input=args.input,
+""".format(input='temp_reqs.txt',
            whl_libraries='\n'.join(map(whl_library, whls)) if whls else "pass",
            mappings=whl_targets))
 
