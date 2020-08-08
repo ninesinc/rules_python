@@ -19,6 +19,7 @@ import json
 import os
 import pkgutil
 import pkg_resources
+import platform
 import re
 import shutil
 import sys
@@ -165,7 +166,17 @@ def main():
     for root, unused_dirnames, filenames in os.walk(dir):
       for fname in filenames:
         if fname.endswith('.whl'):
-          yield os.path.join(root, fname)
+          # Ignore the whls of other platforms
+          if fname.endswith('any.whl'):
+            yield os.path.join(root, fname)
+          else:
+            current_platform = platform.system()
+            os_string_map = {'Linux': 'linux', 'Darwin': 'macosx', 'Windows': 'win'}
+            os_string = os_string_map[current_platform]
+            if os_string in fname:
+              yield os.path.join(root, fname)
+            else:
+              continue
 
   whls = [Wheel(path) for path in list_whls()]
   possible_extras = determine_possible_extras(whls)
