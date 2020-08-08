@@ -165,16 +165,18 @@ def main():
         continue
       if "==" in line:
         keeped_lines.append(line)
-      elif line.endswith('.whl'):
+        continue
+      if line.endswith('.whl'):
         current_platform = platform.system()
         os_string_map = {'Linux': 'linux', 'Darwin': 'macosx', 'Windows': 'win'}
         current_os = os_string_map[current_platform]
         if current_os in line:
           keeped_lines.append(line)
-      else:
-        continue
+        else:
+          continue
     tempfile = open("temp_reqs.txt", "wt")
     tempfile.writelines(keeped_lines)
+    tempfile.close()
 
   # https://github.com/pypa/pip/blob/9.0.1/pip/__init__.py#L209
   if pip_main(["wheel", "-w", args.directory, "-r", "temp_reqs.txt"]):
