@@ -156,8 +156,28 @@ def determine_possible_extras(whls):
 def main():
   args = parser.parse_args()
 
+  # Ignore the whls of other platforms
+  with open(args.input, "rt") as f:
+    keeped_lines = []
+    for line in f.readlines():
+      line = line.strip()
+      if not line or line.lstrip(" ").startswith("#"):
+        continue
+      if "==" in line:
+        keeped_lines.append(line)
+      elif line.endswith('.whl'):
+        current_platform = platform.system()
+        os_string_map = {'Linux': 'linux', 'Darwin': 'macosx', 'Windows': 'win'}
+        current_os = os_string_map[current_platform]
+        if current_os in line:
+          keeped_lines.append(line)
+      else:
+        continue
+    tempfile = open("temp_reqs.txt", "w")
+    tempfile.writelines(keeped_lines)
+
   # https://github.com/pypa/pip/blob/9.0.1/pip/__init__.py#L209
-  if pip_main(["wheel", "-w", args.directory, "-r", args.input]):
+  if pip_main(["wheel", "-w", args.directory, "-r", "temp_reqs.txt"]):
     sys.exit(1)
 
   # Enumerate the .whl files we downloaded.
@@ -165,18 +185,8 @@ def main():
     dir = args.directory + '/'
     for root, unused_dirnames, filenames in os.walk(dir):
       for fname in filenames:
-        if fname.endswith('.whl'):
-          # Ignore the whls of other platforms
-          if fname.endswith('any.whl'):
-            yield os.path.join(root, fname)
-          else:
-            current_platform = platform.system()
-            os_string_map = {'Linux': 'linux', 'Darwin': 'macosx', 'Windows': 'win'}
-            os_string = os_string_map[current_platform]
-            if os_string in fname:
-              yield os.path.join(root, fname)
-            else:
-              continue
+        if fname.endswith('.whl'):          
+          yield os.path.join(root, fname)
 
   whls = [Wheel(path) for path in list_whls()]
   possible_extras = determine_possible_extras(whls)
