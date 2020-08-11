@@ -6,7 +6,7 @@ RUN apt-get update -y && apt-get install -y \
     # which we're not using here, but let's be safe.
     openjdk-8-jdk \
     # These requirements are from the link above.
-    pkg-config zip g++ zlib1g-dev unzip python3 \
+    pkg-config zip g++ zlib1g-dev unzip python3 python-dev \
     # And why should python3 have all the fun?
     python \
     # We also need git for git_repository to work. Maybe these other ones too.
@@ -26,10 +26,10 @@ CMD cp -r /opt/rules_python_source /opt/rules_python && \
     cd /opt/rules_python && \
     bazel clean && \
     bazel build //packaging:piptool.par //packaging:whltool.par \
-        # This works around a bug in git_repository to give us better debugging
-        # if there's an error.
-        # TODO(brandjon): Remove this once we're using Bazel 0.29, which
-        # contains the fix.
-        --incompatible_string_join_requires_strings=false && \
+    # This works around a bug in git_repository to give us better debugging
+    # if there's an error.
+    # TODO(brandjon): Remove this once we're using Bazel 0.29, which
+    # contains the fix.
+    --incompatible_string_join_requires_strings=false && \
     cp bazel-bin/packaging/piptool.par bazel-bin/packaging/whltool.par /opt/rules_python_source/tools/ && \
     chown --reference=/opt/rules_python_source/update_tools.sh /opt/rules_python_source/tools/piptool.par /opt/rules_python_source/tools/whltool.par
