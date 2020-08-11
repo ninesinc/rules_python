@@ -21,7 +21,10 @@ load(
     "@examples_extras//:requirements.bzl",
     _extras_install = "pip_install",
 )
-
+load(
+    "@detectron2_test//:requirements.bzl",
+    _det2_install = "pip_install",
+)
 
 def rules_python_internal_setup():
     # Requirements for building our piptool.
@@ -32,3 +35,4 @@ def rules_python_internal_setup():
     _version_install()
     _boto_install()
     _extras_install()
+    _det2_install()

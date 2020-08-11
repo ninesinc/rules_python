@@ -1,6 +1,6 @@
 load("@bazel_federation//:repositories.bzl", "bazel_stardoc", "rules_pkg")
 load("@bazel_federation//:third_party_repositories.bzl", "futures_2_whl", "futures_3_whl", "google_cloud_language_whl", "grpc_whl", "mock_whl", "subpar")
-load("@rules_python//python:pip.bzl", "pip_import")
+load("@rules_python//python:pip.bzl", "pip3_import", "pip_import")
 
 
 def rules_python_internal_deps():
@@ -45,4 +45,8 @@ def examples():
     pip_import(
         name = "examples_extras",
         requirements = "@rules_python//examples/extras:requirements.txt",
+    )
+    pip3_import(
+        name = "detectron2_test",
+        requirements = "@rules_python//examples/detectron2:requirements.txt",
     )
