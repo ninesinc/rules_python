@@ -164,14 +164,14 @@ def main():
       if not line or line.lstrip(" ").startswith("#"):
         continue
       if "==" in line:
-        keeped_lines.append(line)
+        keeped_lines.append(line + "\n")
         continue
       if line.endswith('.whl'):
         current_platform = platform.system()
         os_string_map = {'Linux': 'linux', 'Darwin': 'macosx', 'Windows': 'win'}
         current_os = os_string_map[current_platform]
         if current_os in line:
-          keeped_lines.append(line)
+          keeped_lines.append(line + "\n")
         else:
           continue
     tempfile = open("temp_reqs.txt", "wt")
