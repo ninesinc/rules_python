@@ -172,7 +172,7 @@ def filter_requirements(requirements_file):
           if line.startswith("http") or line.startswith("git"):
             keeped_lines.append(line + "\n")
           elif line.startswith("./"):
-            abspath = os.path.join(os.path.dirname(args.input), os.path.basename(line))
+            abspath = os.path.join(os.path.dirname(requirements_file), os.path.basename(line))
             keeped_lines.append(abspath + "\n")
           else:
             raise ValueError("Only remotely hosted whls and local relative path (starting with './') are supported.")
