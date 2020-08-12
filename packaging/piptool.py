@@ -153,11 +153,9 @@ def determine_possible_extras(whls):
     for whl in whls
   }
 
-def main():
-  args = parser.parse_args()
-
+def filter_requirements(requirements_file):
   # Ignore the whls of other platforms
-  with open(args.input, "rt") as f:
+  with open(requirements_file, "rt") as f:
     keeped_lines = []
     for line in f.readlines():
       line = line.strip()
@@ -171,12 +169,23 @@ def main():
         os_string_map = {'Linux': 'linux', 'Darwin': 'macosx', 'Windows': 'win'}
         current_os = os_string_map[current_platform]
         if current_os in line:
-          keeped_lines.append(line + "\n")
+          if line.startswith("http") or line.startswith("git"):
+            keeped_lines.append(line + "\n")
+          elif line.startswith("./"):
+            abspath = os.path.join(os.path.dirname(args.input), os.path.basename(line))
+            keeped_lines.append(abspath + "\n")
+          else:
+            raise ValueError("Only remotely hosted whls and local relative path (starting with './') are supported.")
         else:
           continue
     tempfile = open("temp_reqs.txt", "wt")
     tempfile.writelines(keeped_lines)
     tempfile.close()
+
+def main():
+  args = parser.parse_args()
+
+  filter_requirements(args.input)
 
   # https://github.com/pypa/pip/blob/9.0.1/pip/__init__.py#L209
   if pip_main(["wheel", "-w", args.directory, "-r", "temp_reqs.txt"]):
